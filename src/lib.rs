@@ -7,6 +7,7 @@ pub mod transcript;
 pub mod trie;
 pub mod util;
 pub mod verkle;
+use std::mem::transmute;
 
 use ark_bls12_381::Bls12_381;
 pub use commitment::VerkleCommitment;
@@ -17,6 +18,40 @@ pub use verkle::{VerklePath, VerkleProof};
 
 use sha2::Digest;
 pub type HashFunction = sha2::Sha256;
+
+pub struct SetupKeys {
+    commit_key: CommitKeyLagrange<Bls12_381>,
+    opening_key: OpeningKey<Bls12_381>
+}
+
+
+#[no_mangle]
+pub extern fn dummy_setup_bind(width: usize) -> *mut SetupKeys {
+    let (c_key, o_key) = dummy_setup(width);
+    let _keys = unsafe { transmute ( Box::new(SetupKeys {
+        commit_key: c_key,
+        opening_key: o_key,
+    } ) ) };
+    _keys
+
+}
+
+
+#[no_mangle]
+pub extern fn verkle_trie_get(width: usize, keys: *mut SetupKeys) -> *mut VerkleTrie<'static> {
+    let mut _keys = unsafe { &mut *keys };
+    let commit_key = &_keys.commit_key;
+    let mut _trie = unsafe { transmute ( Box::new( VerkleTrie::new(width, commit_key) ) ) };
+    _trie
+}
+
+#[no_mangle]
+pub extern fn verkle_trie_insert(width: usize, keys: *mut SetupKeys) -> *mut VerkleTrie<'static> {
+    let mut _keys = unsafe { &mut *keys };
+    let commit_key = &_keys.commit_key;
+    let mut _trie = unsafe { transmute ( Box::new( VerkleTrie::new(width, commit_key) ) ) };
+    _trie
+}
 
 /// create a dummy srs
 pub fn dummy_setup(width: usize) -> (CommitKeyLagrange<Bls12_381>, OpeningKey<Bls12_381>) {
