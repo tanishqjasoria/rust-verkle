@@ -8,6 +8,7 @@ pub mod trie;
 pub mod util;
 pub mod verkle;
 use std::mem::transmute;
+use interoptopus::{ffi_function, ffi_type, inventory};
 
 use ark_bls12_381::Bls12_381;
 pub use commitment::VerkleCommitment;
@@ -24,7 +25,6 @@ pub struct SetupKeys {
     opening_key: OpeningKey<Bls12_381>
 }
 
-
 #[no_mangle]
 pub extern fn dummy_setup_bind(width: usize) -> *mut SetupKeys {
     let (c_key, o_key) = dummy_setup(width);
@@ -35,7 +35,6 @@ pub extern fn dummy_setup_bind(width: usize) -> *mut SetupKeys {
     _keys
 
 }
-
 
 #[no_mangle]
 pub extern fn verkle_trie_get(width: usize, keys: *mut SetupKeys) -> *mut VerkleTrie<'static> {
@@ -111,6 +110,8 @@ pub fn bit_extraction(bytes: &[u8], width: usize) -> Vec<usize> {
     s
 }
 
+#[ffi_type]
+#[repr(C)]
 // Remove duplicate code below and move into trie module
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub struct Key(ByteArr);
@@ -166,6 +167,9 @@ impl Key {
     }
 }
 
+
+#[ffi_type]
+#[repr(C)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub struct Value(ByteArr);
 
@@ -186,6 +190,9 @@ impl Value {
         Value(ByteArr::max())
     }
 }
+
+#[ffi_type]
+#[repr(C)]
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 struct ByteArr(pub [u8; 32]);
 
@@ -378,3 +385,5 @@ fn ten_bit_path_index() {
         )
     }
 }
+
+inventory!(ffi_inventory, [], [], [ByteArr], []);
