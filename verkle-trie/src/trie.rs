@@ -1208,11 +1208,5 @@ mod tests {
         let mut trie = Trie::new(VerkleConfig::new(db));
         let elapsed = start.elapsed();
         println!("Trie creation took: {:?}", elapsed);
-
-        let start = Instant::now();
-        let db = MemoryDb::new();
-        let mut trie = Trie::new(VerkleConfig::new(db));
-        let elapsed = start.elapsed();
-        println!("Trie creation took: {:?}", elapsed);
     }
 }
