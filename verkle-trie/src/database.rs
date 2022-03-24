@@ -1,5 +1,5 @@
 pub mod default;
-mod generic;
+pub mod generic;
 pub mod memory_db;
 pub mod meta;
 
