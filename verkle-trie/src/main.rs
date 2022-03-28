@@ -1,66 +1,33 @@
-// use sha2::{Digest, Sha256};
+use sha2::{Digest, Sha256};
 
-// use ark_ec::ProjectiveCurve;
-// use once_cell::sync::Lazy;
-// use verkle_db::{BareMetalDiskDb, RocksDb};
-// use verkle_trie::{
-//     database::{memory_db::MemoryDb, VerkleDb},
-//     precompute::PrecomputeLagrange,
-//     trie::Trie,
-//     SRS,
-// };
-
-// pub static PRECOMPUTED_TABLE: Lazy<PrecomputeLagrange> =
-//     Lazy::new(|| PrecomputeLagrange::precompute(&SRS.map(|point| point.into_affine())));
-
-// pub static KEYS_10K: Lazy<Vec<[u8; 32]>> =
-//     Lazy::new(|| generate_diff_set_of_keys(10_000).collect());
-// pub static SAME_KEYS_10K: Lazy<Vec<[u8; 32]>> =
-//     Lazy::new(|| generate_set_of_keys(10_000).collect());
-
-// pub fn generate_set_of_keys(n: u32) -> impl Iterator<Item = [u8; 32]> {
-//     (0u32..n).map(|i| {
-//         let mut arr = [0u8; 32];
-//         let i_bytes = i.to_be_bytes();
-//         arr[0] = i_bytes[0];
-//         arr[1] = i_bytes[1];
-//         arr[2] = i_bytes[2];
-//         arr[3] = i_bytes[3];
-
-//         let mut hasher = Sha256::new();
-//         hasher.update(&arr[..]);
-//         hasher.update(b"seed");
-
-//         let res: [u8; 32] = hasher.finalize().try_into().unwrap();
-//         res
-//     })
-// }
-
-// pub fn generate_diff_set_of_keys(n: u32) -> impl Iterator<Item = [u8; 32]> {
-//     (0u32..n).map(|i| {
-//         let mut hasher = Sha256::new();
-//         hasher.update(i.to_be_bytes());
-
-//         let res: [u8; 32] = hasher.finalize().try_into().unwrap();
-//         res
-//     })
-// }
+use ark_ec::ProjectiveCurve;
+use once_cell::sync::Lazy;
+use verkle_db::{BareMetalDiskDb, RocksDb};
+use verkle_trie::{database::{memory_db::MemoryDb, VerkleDb}, trie::Trie, VerkleConfig, Config, TrieTrait};
+use verkle_trie::committer::test::TestCommitter;
 
 fn main() {
 
-    // use tempfile::tempdir;
-    // let temp_dir = tempdir().unwrap();
+    use tempfile::tempdir;
+    let temp_dir = tempdir().unwrap();
 
-    // let db = MemoryDb::new();
-    // let db = VerkleDb::<RocksDb>::from_path(&temp_dir);
+    let db = VerkleDb::<RocksDb>::from_path(&temp_dir);
 
-    // let mut trie = Trie::new(db, &*PRECOMPUTED_TABLE);
-    // // Initial set of keys
-    // let keys = generate_set_of_keys(500_000);
-    // for key in keys {
-    //     trie.insert(key, key);
-    // }
-    // trie.flush_database();
+    let committer = TestCommitter;
+    let config = Config { db, committer };
+    let mut trie = Trie::new(config);
+    let key = [
+        121, 85, 7, 198, 131, 230, 143, 90, 165, 129, 173, 81, 186, 89, 19, 191, 13, 107, 197,
+        120, 243, 229, 224, 183, 72, 25, 6, 8, 210, 159, 31, 0,
+    ];
+    let value = [
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 2,
+    ];
+    trie.insert_single(key, value);
+    let sr1 = trie.root_hash();
+    trie.flush_database();
+    let sr2 = trie.root_hash();
 
     // use std::time::Instant;
 

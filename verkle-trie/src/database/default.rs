@@ -77,6 +77,7 @@ impl<S: BatchDB> Flush for VerkleDb<S> {
         self.storage.flush(w.inner);
 
         self.batch.clear();
+        self.cache.clear();
     }
 }
 
