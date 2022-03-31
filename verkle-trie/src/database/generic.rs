@@ -61,7 +61,7 @@ impl<T: BatchWriter> WriteOnlyHigherDb for GenericBatchWriter<T> {
 // This struct allows us to provide a default implementation of ReadOnlyHigherDB to
 // all structs that implement BatchDB
 pub struct GenericBatchDB<T> {
-    inner: T,
+    pub inner: T,
 }
 
 impl<T> std::ops::Deref for GenericBatchDB<T> {
