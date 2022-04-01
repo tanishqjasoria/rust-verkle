@@ -90,6 +90,19 @@ impl<T: BareMetalDiskDb> BareMetalDiskDb for GenericBatchDB<T> {
     const DEFAULT_PATH: &'static str = T::DEFAULT_PATH;
 }
 
+impl<T: BareMetalKVDb> BareMetalKVDb for GenericBatchDB<T> {
+    fn fetch(&self, key: &[u8]) -> Option<Vec<u8>> {
+        self.inner.fetch(key)
+    }
+
+    fn new() -> Self {
+        Self {
+            inner: T::new(),
+        }
+    }
+}
+
+
 impl<T: BareMetalKVDb> ReadOnlyHigherDb for GenericBatchDB<T> {
     fn get_leaf(&self, key: [u8; 32]) -> Option<[u8; 32]> {
         let mut labelled_key = Vec::with_capacity(key.len() + 1);
