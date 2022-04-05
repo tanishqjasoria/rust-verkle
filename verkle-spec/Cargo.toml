@@ -7,3 +7,5 @@ edition = "2021"
 
 [dependencies]
 ethereum-types = "0.13.1"
+verkle-trie = { path = "../verkle-trie", default-features = false }
+hex = "0.4"

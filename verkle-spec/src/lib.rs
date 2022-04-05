@@ -1,6 +1,7 @@
 pub mod code;
 pub mod header;
 pub mod storage;
+pub mod hash;
 
 pub(crate) mod parameters;
 mod util;
