@@ -62,3 +62,73 @@ impl Header {
         self.version_tree_key
     }
 }
+
+#[cfg(test)]
+mod test {
+    use crate::hash::PedersenHasher;
+    use crate::header::Header;
+    use crate::{Address32, Hasher, H256};
+    use hex::FromHex;
+    #[test]
+    fn header_test() {
+        let tests = [
+            (
+                "0000000000000000000000000000000000000000000000000000000000000000",
+                [
+                    "695921dca3b16c5cc850e94cdd63f573c467669e89cec88935d03474d6bdf900",
+                    "695921dca3b16c5cc850e94cdd63f573c467669e89cec88935d03474d6bdf901",
+                    "695921dca3b16c5cc850e94cdd63f573c467669e89cec88935d03474d6bdf902",
+                    "695921dca3b16c5cc850e94cdd63f573c467669e89cec88935d03474d6bdf903",
+                    "695921dca3b16c5cc850e94cdd63f573c467669e89cec88935d03474d6bdf904",
+                ],
+            ),
+            (
+                "0002030000000000000000000000000000000000000000000000000000000000",
+                [
+                    "5010fabfb319bf84136db68445972cdd5476ff2fbf3e5133330b3946b84b4e00",
+                    "5010fabfb319bf84136db68445972cdd5476ff2fbf3e5133330b3946b84b4e01",
+                    "5010fabfb319bf84136db68445972cdd5476ff2fbf3e5133330b3946b84b4e02",
+                    "5010fabfb319bf84136db68445972cdd5476ff2fbf3e5133330b3946b84b4e03",
+                    "5010fabfb319bf84136db68445972cdd5476ff2fbf3e5133330b3946b84b4e04",
+                ],
+            ),
+            (
+                "0071562b71999873db5b286df957af199ec94617000000000000000000000000",
+                [
+                    "6fc5ac021ff2468685885ad7fdb31a0c58d1ee93254a58c9e9e0809187c53e00",
+                    "6fc5ac021ff2468685885ad7fdb31a0c58d1ee93254a58c9e9e0809187c53e01",
+                    "6fc5ac021ff2468685885ad7fdb31a0c58d1ee93254a58c9e9e0809187c53e02",
+                    "6fc5ac021ff2468685885ad7fdb31a0c58d1ee93254a58c9e9e0809187c53e03",
+                    "6fc5ac021ff2468685885ad7fdb31a0c58d1ee93254a58c9e9e0809187c53e04",
+                ],
+            ),
+        ];
+        // print!("{:?}",<[u8;64]>::from_hex("0071562b71999873db5b286df957af199ec946170000000000000000000000000000000000000000000000000000000000000000000000000000000000000000").expect("Decoding failed"));
+        for (input, output) in tests.iter() {
+            let input_bytes = <[u8; 32]>::from_hex(input).expect("Error decoding");
+            let add = Address32::from_slice(&input_bytes[..]);
+            let header = Header::new::<PedersenHasher>(add);
+
+            assert_eq!(
+                header.version(),
+                H256::from_slice(&<[u8; 32]>::from_hex(output[0]).expect("Error decoding"))
+            );
+            assert_eq!(
+                header.balance(),
+                H256::from_slice(&<[u8; 32]>::from_hex(output[1]).expect("Error decoding"))
+            );
+            assert_eq!(
+                header.nonce(),
+                H256::from_slice(&<[u8; 32]>::from_hex(output[2]).expect("Error decoding"))
+            );
+            assert_eq!(
+                header.code_keccak(),
+                H256::from_slice(&<[u8; 32]>::from_hex(output[3]).expect("Error decoding"))
+            );
+            assert_eq!(
+                header.code_size(),
+                H256::from_slice(&<[u8; 32]>::from_hex(output[4]).expect("Error decoding"))
+            );
+        }
+    }
+}
