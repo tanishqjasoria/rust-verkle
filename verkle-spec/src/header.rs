@@ -67,7 +67,7 @@ impl Header {
 mod test {
     use crate::hash::PedersenHasher;
     use crate::header::Header;
-    use crate::{Address32, Hasher, H256};
+    use crate::{Address32};
     use hex::FromHex;
     #[test]
     fn header_test() {
@@ -103,7 +103,6 @@ mod test {
                 ],
             ),
         ];
-        // print!("{:?}",<[u8;64]>::from_hex("0071562b71999873db5b286df957af199ec946170000000000000000000000000000000000000000000000000000000000000000000000000000000000000000").expect("Decoding failed"));
         for (input, output) in tests.iter() {
             let input_bytes = <[u8; 32]>::from_hex(input).expect("Error decoding");
             let add = Address32::from_slice(&input_bytes[..]);
@@ -111,23 +110,23 @@ mod test {
 
             assert_eq!(
                 header.version(),
-                H256::from_slice(&<[u8; 32]>::from_hex(output[0]).expect("Error decoding"))
+                Address32::from_slice(&<[u8; 32]>::from_hex(output[0]).expect("Error decoding"))
             );
             assert_eq!(
                 header.balance(),
-                H256::from_slice(&<[u8; 32]>::from_hex(output[1]).expect("Error decoding"))
+                Address32::from_slice(&<[u8; 32]>::from_hex(output[1]).expect("Error decoding"))
             );
             assert_eq!(
                 header.nonce(),
-                H256::from_slice(&<[u8; 32]>::from_hex(output[2]).expect("Error decoding"))
+                Address32::from_slice(&<[u8; 32]>::from_hex(output[2]).expect("Error decoding"))
             );
             assert_eq!(
                 header.code_keccak(),
-                H256::from_slice(&<[u8; 32]>::from_hex(output[3]).expect("Error decoding"))
+                Address32::from_slice(&<[u8; 32]>::from_hex(output[3]).expect("Error decoding"))
             );
             assert_eq!(
                 header.code_size(),
-                H256::from_slice(&<[u8; 32]>::from_hex(output[4]).expect("Error decoding"))
+                Address32::from_slice(&<[u8; 32]>::from_hex(output[4]).expect("Error decoding"))
             );
         }
     }

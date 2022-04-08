@@ -30,13 +30,12 @@ mod test{
             (
                 <[u8;64]>::from_hex("00020300000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000").expect("Decoding failed"),
                 <[u8;32]>::from_hex("5010fabfb319bf84136db68445972cdd5476ff2fbf3e5133330b3946b84b4e6a").expect("Decoding failed")
+            ),
+            (
+                <[u8;64]>::from_hex("0071562b71999873db5b286df957af199ec946170000000000000000000000000000000000000000000000000000000000000000000000000000000000000000").expect("Decoding failed"),
+                <[u8;32]>::from_hex("6fc5ac021ff2468685885ad7fdb31a0c58d1ee93254a58c9e9e0809187c53e71").expect("Decoding failed")
             )
-            // (
-            //     <[u8;64]>::from_hex("0071562b71999873db5b286df957af199ec946170000000000000000000000000000000000000000000000000000000000000000000000000000000000000000").expect("Decoding failed"),
-            //     <[u8;32]>::from_hex("f56e644224f4576490cfe0de1424a4532212529bfe374713d84e7d7e8e927200").expect("Decoding failed")
-            // )
         ];
-        // print!("{:?}",<[u8;64]>::from_hex("0071562b71999873db5b286df957af199ec946170000000000000000000000000000000000000000000000000000000000000000000000000000000000000000").expect("Decoding failed"));
         for (input,output) in tests.iter(){
             assert_eq!(PedersenHasher::hash64(*input),H256::from_slice(&output[..]));
         }
