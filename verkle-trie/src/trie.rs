@@ -1231,7 +1231,8 @@ mod tests {
         let mut hash = [0u8; 32];
         let root = trie.root_hash();
         root.serialize(&mut hash[..]).unwrap();
-        println!("{:?}", hex::encode(hash));
-        println!("{:?}", "baa4117e95c654173f32522f6c5490826c0e23034b2675391d6951b7545cec95");
+        println!("rustRoot{:?}", hex::encode(hash));
+        println!("golangRoot{:?}", test_account_root_commitment_golang);
+        assert_eq!(hex::encode(hash), test_account_root_commitment_golang);
     }
 }
