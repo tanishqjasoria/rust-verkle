@@ -763,6 +763,7 @@ mod tests {
     use ark_ff::{PrimeField, Zero};
     use ark_serialize::CanonicalSerialize;
     use bandersnatch::{EdwardsProjective, Fr};
+    use hex::FromHex;
 
     use crate::constants::{CRS, TWO_POW_128};
     use crate::database::memory_db::MemoryDb;
@@ -1197,4 +1198,40 @@ mod tests {
         let val = trie.get(tree_key_code_size).unwrap();
     }
 
+    #[test]
+    fn insert_keys_test_state_root() {
+
+        let test_account_address = "71562b71999873DB5b286dF957af199Ec94617f7";
+        let test_account_keys: [[u8;32];5] = [
+            [245, 110, 100, 66, 36, 244, 87, 100, 144, 207, 224, 222, 20, 36, 164, 83, 34, 18, 82, 155, 254, 55, 71, 19, 216, 78, 125, 126, 142, 146, 114, 0],
+            [245, 110, 100, 66, 36, 244, 87, 100, 144, 207, 224, 222, 20, 36, 164, 83, 34, 18, 82, 155, 254, 55, 71, 19, 216, 78, 125, 126, 142, 146, 114, 1],
+            [245, 110, 100, 66, 36, 244, 87, 100, 144, 207, 224, 222, 20, 36, 164, 83, 34, 18, 82, 155, 254, 55, 71, 19, 216, 78, 125, 126, 142, 146, 114, 2],
+            [245, 110, 100, 66, 36, 244, 87, 100, 144, 207, 224, 222, 20, 36, 164, 83, 34, 18, 82, 155, 254, 55, 71, 19, 216, 78, 125, 126, 142, 146, 114, 3],
+            [245, 110, 100, 66, 36, 244, 87, 100, 144, 207, 224, 222, 20, 36, 164, 83, 34, 18, 82, 155, 254, 55, 71, 19, 216, 78, 125, 126, 142, 146, 114, 4],
+        ];
+
+        let test_account_values: [[u8;32];5] = [
+            [0;32],
+            [0, 0, 100, 167, 179, 182, 224, 13, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0;32],
+            [197, 210, 70, 1, 134, 247, 35, 60, 146, 126, 125, 178, 220, 199, 3, 192, 229, 0, 182, 83, 202, 130, 39, 59, 123, 250, 216, 4, 93, 133, 164, 112],
+            [0;32]
+        ];
+
+        let test_account_root_commitment_golang = "baa4117e95c654173f32522f6c5490826c0e23034b2675391d6951b7545cec95";
+
+
+        let db = MemoryDb::new();
+        let mut trie = Trie::new(TestConfig::new(db));
+
+        for i in 0..5 {
+            trie.insert_single(test_account_keys[i], test_account_values[i]);
+        }
+
+        let mut hash = [0u8; 32];
+        let root = trie.root_hash();
+        root.serialize(&mut hash[..]).unwrap();
+        println!("{:?}", hex::encode(hash));
+        println!("{:?}", "baa4117e95c654173f32522f6c5490826c0e23034b2675391d6951b7545cec95");
+    }
 }
