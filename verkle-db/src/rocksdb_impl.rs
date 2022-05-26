@@ -1,12 +1,13 @@
 use crate::{BareMetalDiskDb, BareMetalKVDb};
-pub use rocksdb::DB;
+
+pub type DB = DBWithThreadMode<MultiThreaded>;
 
 impl BareMetalDiskDb for DB {
     fn from_path<P: AsRef<std::path::Path>>(path: P) -> Self {
         // use rusty_leveldb::{CompressionType, Options};
         // let mut opt = Options::default();
         // opt.compression_type = CompressionType::CompressionSnappy;
-        let db = DB::open_default(path).unwrap();
+        let db: DBWithThreadMode<MultiThreaded> = DB::open_default(path).unwrap();
         db
     }
 
@@ -24,7 +25,7 @@ impl BareMetalKVDb for DB {
 }
 
 use crate::{BatchDB, BatchWriter};
-use rocksdb::WriteBatch;
+use rocksdb::{DBWithThreadMode, MultiThreaded, WriteBatch};
 
 impl BatchWriter for WriteBatch {
     fn new() -> Self {
