@@ -175,7 +175,7 @@ pub extern "C" fn verify_proof(ctx: *mut Context, input: *const u8, len: usize) 
     let mut transcript = Transcript::new(b"verkle");
 
     // TODO: This should not need to clone the CRS, but instead take a reference
-    let verif = MultiPointProof::check(
+    let is_valid = MultiPointProof::check(
         &proof,
         &context.crs.clone(),
         &context.precomputed_weights,
@@ -183,5 +183,5 @@ pub extern "C" fn verify_proof(ctx: *mut Context, input: *const u8, len: usize) 
         &mut transcript,
     );
 
-    verif
+    is_valid
 }
